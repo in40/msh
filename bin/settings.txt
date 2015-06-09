@@ -8,10 +8,11 @@ SV=32.30
 #set target temp
 PVn=0
 #current temp
-#PVfile=./temp
+PVfile=./temp
+PVfile2=./temp
 #PVfile=/mnt/1wire/uncached/28.1BF958050000/temperature10
-PVfile=/mnt/1wire/uncached/28.420859050000/temperature9
-PVfile2=/mnt/1wire/uncached/28.420859050000/temperature9
+#PVfile=/mnt/1wire/uncached/28.420859050000/temperature9
+#PVfile2=/mnt/1wire/uncached/28.420859050000/temperature9
 
 et=0
 et1=0
@@ -28,8 +29,8 @@ P=10
 #heating value
 ErrP=0
 #Bresenham=(0 0 0 0 0 0 0 0 0 0)
-#switch_file=./sensed.A
+switch_file=./sensed.A
 #switch_file=/mnt/1wire/uncached/29.D6080E000000/PIO.6
-switch_file=/mnt/1wire/uncached/29.D6080E000000/PIO.5
+#switch_file=/mnt/1wire/uncached/29.D6080E000000/PIO.5
 panic_switch_file=./sensed.B
 panic_t=99
