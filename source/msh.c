@@ -12,6 +12,7 @@
 #include <menu.h>
 #include <signal.h>
 #include <sys/types.h>
+#include <sqlite3.h>
 //
 #define P1_READ     0
 #define P2_WRITE    1
@@ -794,6 +795,17 @@ exit(signum);
 }
 
 int main(){	
+sqlite3 *conn;
+sqlite3_stmt *res;
+int sqlerror=0;
+sqlerror=sqlite3_open("mshdata.sl3", &conn);
+if (sqlerror) {
+	puts("Database error");
+	exit (0);
+}
+
+
+		
 signal(SIGINT, signal_callback_handler);
 read_config();
 gettimeofday(&starts, NULL);
