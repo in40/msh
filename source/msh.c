@@ -46,6 +46,10 @@ char val3[256]={"x"};
 long elapsed_time;
 struct timeval starts, ends;
 char brasenham[256];//={0};
+sqlite3 *conn;
+sqlite3_stmt *res;
+int sqlerror=0;
+
 WINDOW *create_newwin( int height, int width, int start_y, int start_x);
 
 WINDOW *create_newwin(int height, int width, int starty, int startx)
@@ -794,10 +798,12 @@ exit(signum);
 */
 }
 
+int dbupdate(){
+sqlite3_exec(conn,"INSERT INTO history_records (time_date, brasenham) values(datetime(),brasenham)",0,0,0);
+
+}
+
 int main(){	
-sqlite3 *conn;
-sqlite3_stmt *res;
-int sqlerror=0;
 sqlerror=sqlite3_open("mshdata.sl3", &conn);
 if (sqlerror) {
 	puts("Database error");
@@ -854,6 +860,7 @@ set_et();
 calc_pid();
 calc_braz();
 cmdval=switch_heat();
+	dbupdate();
 read_cmdval(cmdval);
 gettimeofday(&endm, NULL);
 secs_usedm=(endm.tv_sec - startm.tv_sec);
