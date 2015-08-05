@@ -1,5 +1,6 @@
 #define _BSD_SOURCE
 #define _POSIX_SOURCE
+#define _POSIX_C_SOURCE 200201L
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -449,7 +450,7 @@ else{
 if(val!=-1){
 mvwprintw(hbrasdisp,1, ((40-Pmax)/2+val1),"%d",val);
 wrefresh(hbrasdisp);
-}}
+}usleep(50000);}
 
 
 }
@@ -504,7 +505,13 @@ val1=y;
 write(fd[P1_WRITE], &val, sizeof(val));
 write(fd[P2_WRITE], &val1, sizeof(val1));
 if(delay==1){usleep((1000000*period)/Pmax);}
-//usleep(300000);
+//struct timespec ts = {
+	//.tv_sec = 5,
+	//.tv_nsec=0.01*1000000000};
+
+	
+//if(delay==1){//nanosleep(&ts,NULL);}
+//usleep(3000000);}
 //fclose(heatswitch);
 y++;
 }
@@ -799,12 +806,22 @@ exit(signum);
 }
 
 int dbupdate(){
-sqlite3_exec(conn,"INSERT INTO history_records (time_date, brasenham) values(datetime(),brasenham)",0,0,0);
+	char *query=0;
+	
+//sqlite3_exec(conn,"INSERT INTO history_records (time_date, brasenham) values(datetime(),bras2sql)",0,0,0);
 
+sprintf(&query, "INSERT INTO history_records (time_date, brasenham) values('%d','%s');",time(NULL),brasenham[1]);
+	
+sqlite3_prepare_v2(conn, query, strlen(query), &res, NULL);
+
+sqlite3_step(res);
+sqlite3_finalize(res);
+free(query);
+	
 }
 
 int main(){	
-sqlerror=sqlite3_open("mshdata.sl3", &conn);
+sqlerror=sqlite3_open("./mshdata.sl3", &conn);
 if (sqlerror) {
 	puts("Database error");
 	exit (0);
@@ -866,6 +883,7 @@ gettimeofday(&endm, NULL);
 secs_usedm=(endm.tv_sec - startm.tv_sec);
 val2=secs_usedm;
 write(fd[P3_WRITE], &val2, sizeof(val2));
+usleep(100000);
 }
 
 }
