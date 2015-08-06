@@ -1,6 +1,7 @@
 #define _BSD_SOURCE
 #define _POSIX_SOURCE
 #define _POSIX_C_SOURCE 200201L
+#define _GNU_SOURCE
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,11 +39,11 @@ int cmdval=0,stop=0,delay=1;
 int fd[2*NUM_PIPES];
 int val = -1, val1=-1, val2=0, len, i;
 pid_t pid,cpid;
-char PVnS[256], line[256],PVfile[256],PVfile2[256], switch_file[256], panic_switch_file[256];
+char PVnS[256], PVnS2[256], line[256],PVfile[256],PVfile2[256], switch_file[256], panic_switch_file[256];
 int linenum=0;
 int x,hw,Pmax,period,p1,p2,p3;
 double Cp,Ci, Cd, P, ErrP, panic_t;
-double SV,PVn,ut,et,et1,Pt,Dt,It,It1;
+double SV,PVn,PVn2,ut,et,et1,Pt,Dt,It,It1;
 char val3[256]={"x"};
 long elapsed_time;
 struct timeval starts, ends;
@@ -599,6 +600,7 @@ gettimeofday(&start, NULL);
 pvfile =  fopen(PVfile, "r");
 fscanf(pvfile,"%s", PVnS);
 fclose(pvfile);
+
 	//sleep (3);
 gettimeofday(&end, NULL);
 
@@ -608,10 +610,10 @@ sprintf(val3,"t%.4f",PVn);
 write(fd[P4_WRITE], &val3, sizeof(val3));
 
 pvfile2 =  fopen(PVfile2, "r");
-fscanf(pvfile2,"%s", PVnS);
+fscanf(pvfile2,"%s", PVnS2);
 fclose(pvfile2);
-PVn=atof(PVnS);
-sprintf(val3,"T%.4f",PVn);
+PVn2=atof(PVnS2);
+sprintf(val3,"T%.4f",PVn2);
 write(fd[P4_WRITE], &val3, sizeof(val3));
 
 return secs_used;
@@ -807,10 +809,19 @@ exit(signum);
 
 int dbupdate(){
 	char *query=0;
-	
-//sqlite3_exec(conn,"INSERT INTO history_records (time_date, brasenham) values(datetime(),bras2sql)",0,0,0);
+	char *bptrsql;
+	char *brascp;
+	char valbras[256];
+	char brsql[256];
+for (int ii=0; ii<Pmax;ii++){
 
-sprintf(&query, "INSERT INTO history_records (time_date, brasenham) values('%d','%s');",time(NULL),brasenham[1]);
+if(ii==0){bptrsql=&brasenham[ii],sprintf(brsql,"%d",*bptrsql);}
+else{bptrsql=&brasenham[ii];sprintf(brsql,"%s%d",brsql,*bptrsql);}
+sprintf(valbras,"%s",brsql);
+}	
+
+asprintf(&query, "INSERT INTO history_records (time_date, brasenham, set_temp, current_temp1, current_temp2, pid_ci, pid_cd, pid_cp, pid_ut, pid_et, pid_it, pid_dt) VALUES('%u','%s','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f');",(unsigned)time(NULL),valbras,SV,PVn,PVn2,Cp,Ci,Cd,ut,et,It,Dt);
+////asprintf(&query, "INSERT INTO history_records (time_date, brasenham) values('%u','%s');",(unsigned)time(NULL),valbras);
 	
 sqlite3_prepare_v2(conn, query, strlen(query), &res, NULL);
 
