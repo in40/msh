@@ -9,7 +9,7 @@ SV=32.30
 PVn=0
 #current temp
 PVfile=./temp
-PVfile2=./temp
+PVfile2=./temp2
 #PVfile=/mnt/1wire/uncached/28.1BF958050000/temperature10
 #PVfile=/mnt/1wire/uncached/28.420859050000/temperature9
 #PVfile2=/mnt/1wire/uncached/28.420859050000/temperature9
