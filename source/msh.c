@@ -35,7 +35,7 @@
         keep = !keep, count++) \
       for(item = (array) + count; keep; keep = !keep)
 
-int cmdval=0,stop=0,delay=1;
+int cmdval=0,stop=0,delay=1,manual=0;
 int fd[2*NUM_PIPES];
 int val = -1, val1=-1, val2=0, len, i;
 pid_t pid,cpid;
@@ -43,7 +43,7 @@ char PVnS[256], PVnS2[256], line[256],PVfile[256],PVfile2[256], switch_file[256]
 int linenum=0;
 int x,hw,Pmax,period,p1,p2,p3;
 double Cp,Ci, Cd, P, ErrP, panic_t;
-double SV,PVn,PVn2,ut,et,et1,Pt,Dt,It,It1;
+double SV,PVn,PVn2,ut,et,et1,Pt,Dt,It,It1,percent=40;
 char val3[256]={"x"};
 long elapsed_time;
 struct timeval starts, ends;
@@ -86,6 +86,7 @@ init_pair(1,COLOR_WHITE,COLOR_BLUE);
 init_pair(2,COLOR_WHITE,COLOR_RED);
 init_pair(3,COLOR_WHITE,COLOR_GREEN);
 init_pair(4,COLOR_BLACK,COLOR_WHITE);
+init_pair(5,COLOR_BLACK,COLOR_BLACK);
 
 
 WINDOW *parent1;
@@ -118,7 +119,10 @@ wbkgd(stemp,COLOR_PAIR(1));
 WINDOW *hbrasdisp1;
 hbrasdisp1=create_newwin(3,10,0,22);
 box(hbrasdisp1,0,0);
-wbkgd(hbrasdisp1,COLOR_PAIR(1));
+if(manual==0){
+wbkgd(hbrasdisp1,COLOR_PAIR(1));}
+else{wbkgd(hbrasdisp1,COLOR_PAIR(5));}
+	
 
 WINDOW *hbrasdisp9;
 hbrasdisp9=create_newwin(3,10,0,32);
@@ -276,34 +280,77 @@ cmdval=3;
 write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
 mvwprintw(parent1,1,56,"%s","No delay mode");}
 
+case 'm':
+//SV1=SV1+0.1;
+if(manual==1){
+manual=0;
+cmdval=11;
+write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
+mvwprintw(parent1,1,52,"%s"," - ");}
+
+else{
+manual=1;
+cmdval=11;
+write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
+mvwprintw(parent1,1,52,"%s","MAN");}
 wrefresh(parent1);
 break;
-	
+
+
+
 case KEY_RIGHT:
+if(manual==0){
 SV1=SV1+0.1;
 cmdval=10;
 write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
 mvwprintw(parent1,1,20,"%f%s",SV1," UP    ");
 wrefresh(parent1);
+break;}
+else{
+percent=percent+10;
+cmdval=20;
+write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
+mvwprintw(parent1,1,20,"%f%s",percent,"pUP    ");
+wrefresh(parent1);
 break;
+}
 		
 case KEY_LEFT:
+if(manual==0){
 SV1=SV1-0.1;
 cmdval=4;
 write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
 mvwprintw(parent1,1,20,"%f%s",SV1," DOWN ");
 wrefresh(parent1);
 break;
-
+}
+else{
+percent=percent-10;
+cmdval=21;
+write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
+mvwprintw(parent1,1,20,"%f%s",percent,"pDOWN    ");
+wrefresh(parent1);
+break;}
+	
 case KEY_UP:
+if(manual==0){
 SV1++;
 cmdval=1;
 write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
 mvwprintw(parent1,1,20,"%f%s",SV1," UP    ");
 wrefresh(parent1);
 break;
-	
+}
+else{
+percent=percent+10;
+cmdval=20;
+write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
+mvwprintw(parent1,1,20,"%f%s",percent,"pUP    ");
+wrefresh(parent1);
+break;
+}
 case KEY_DOWN:
+if(manual==0){
 SV1--;
 cmdval=2;
 write(fd[P5_WRITE],&cmdval, sizeof(cmdval));
@@ -311,6 +358,15 @@ mvwprintw(parent1,1,20,"%f%s",SV1," DOWN ");
 wrefresh(parent1);
 //cmdval=0;
 break;
+}
+else{
+percent=percent-10;
+cmdval=21;
+write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
+mvwprintw(parent1,1,20,"%f%s",percent,"pUP    ");
+wrefresh(parent1);
+break;
+}
 
 case '0':
 SV1=85;
@@ -352,6 +408,8 @@ mvwprintw(parent1,1,20,"%f%s",SV1," Tails       ");
 wrefresh(parent1);
 break;
 
+
+
 }
 }
 	
@@ -362,6 +420,9 @@ sscanf(val3,"%c%s",cval3,sv1);
 
 if(strncmp(val3,"c",1)==0){
 mvwprintw(hbrasdisp1,1,1,"%s",sv1);
+if(manual==0){
+wbkgd(hbrasdisp1,COLOR_PAIR(1));}
+else{wbkgd(hbrasdisp1,COLOR_PAIR(5));}
 wrefresh(hbrasdisp1);
 }
 
@@ -389,6 +450,12 @@ if(strncmp(val3,"x",1)==0){
 mvwprintw(parent1,1,45,"Set: %s",sv1);
 wrefresh(parent1);
 SV=atof(sv1);
+}
+
+if(strncmp(val3,"m",1)==0){
+mvwprintw(parent1,1,45,"Set: %s",sv1);
+wrefresh(parent1);
+percent=atof(sv1);
 }
 
 if(strncmp(val3,"i",1)==0){
@@ -486,17 +553,16 @@ write(fd[P4_WRITE], &val3, sizeof(val3));
 }
 
 int switch_heat(){
+	
+
 FILE *heatswitch;
 heatswitch=fopen(switch_file, "a");
 val1=-1;
 write(fd[P2_WRITE], &val1, sizeof(val1));
 int y=0;
-//foreach(char *v, brasenham) 
 for(x=0;x<Pmax;x++)
 {
-//heatswitch=fopen(switch_file, "a");
 fprintf(heatswitch,"%d",brasenham[x]);
-//fclose(heatswitch);
 fflush(heatswitch);
 if (y<Pmax){
 read(fd[P5_READ],&cmdval,1);
@@ -506,56 +572,58 @@ val1=y;
 write(fd[P1_WRITE], &val, sizeof(val));
 write(fd[P2_WRITE], &val1, sizeof(val1));
 if(delay==1){usleep((1000000*period)/Pmax);}
-//struct timespec ts = {
-	//.tv_sec = 5,
-	//.tv_nsec=0.01*1000000000};
-
-	
-//if(delay==1){//nanosleep(&ts,NULL);}
-//usleep(3000000);}
-//fclose(heatswitch);
 y++;
 }
 
 }
 fclose(heatswitch);
 return(0);
-}
+	}
 
-int calc_braz(){	
-P=(ut/hw)*100*Pmax/100;
-ErrP=Pmax-P;
-char br1[256],br2[256];
-//sprintf(br2,"%s","x");
-for(x=0;x<Pmax;x++)
-{
-char bptr0;
-if(ErrP<(Pmax/2)){ErrP=ErrP+Pmax;brasenham[x]=1;}
-else{ErrP=ErrP-P;brasenham[x]=0;}
 
-//sprintf(val3,"b%d",brasenham[x]);
-//write(fd[P4_WRITE], &val3, sizeof(val3));
-//sleep(1);
-char *bptr;
-if(x==0){bptr=&brasenham[x];sprintf(br2,"%d",*bptr);}
-else{bptr=&brasenham[x];sprintf(br2,"%s%d",br2,*bptr);}
-//sprintf(val3,"b%s",br2);
-//write(fd[P4_WRITE], &val3, sizeof(val3));
-//sleep(1);
-}
 
-//foreach(char *v, brasenham) {
-//for(int bx=0;bx<=x+2;bx++){
-//sprintf(br2,"%s%c",br2,brasenham[bx]);
+int calc_braz(){
+
+if(manual==0){
+			char br1[256],br2[256];
+		int ErrPn1;
+	P=(ut/hw)*100*Pmax/100/10;
+	ErrP=Pmax-P;
 	
-//sprintf(br2,"%s%s",br2,brasenham[bx]);
-//}
+		for(x=0;x<Pmax;x++)
+		{
+		char bptr0;
+//		if(ErrP<(Pmax/2)){ErrP=ErrP+Pmax;brasenham[x]=1;}
+//		else{ErrP=ErrP-P;brasenham[x]=0;}
+		if(ErrP<(Pmax/2)){ErrPn1=ErrP+Pmax;ErrP=ErrPn1-P;brasenham[x]=1;}
+		else{ErrPn1=ErrP;ErrP=ErrPn1-P;brasenham[x]=0;}
+			
+		char *bptr;
+		if(x==0){bptr=&brasenham[x];sprintf(br2,"%d",*bptr);}
+		else{bptr=&brasenham[x];sprintf(br2,"%s%d",br2,*bptr);}
+		}
 sprintf(val3,"b%s",br2);
-//strncpy(val3,br2,sizeof(val3));
-//sprintf(val3,"b%s",val3);
 write(fd[P4_WRITE], &val3, sizeof(val3));
-//mvwprintw(brasdisp,1,((40-Pmax)/2-1)+x,"%d",brasenham[x]);
+}
 
+else{
+	char br1[256],br2[256];
+	int ErrPn1;
+		P=percent/10;
+		ErrP=Pmax-P;
+	
+		for(x=0;x<Pmax;x++)
+		{
+		if(ErrP<(Pmax/2)){ErrPn1=ErrP+Pmax;ErrP=ErrPn1-P;brasenham[x]=1;}
+		else{ErrPn1=ErrP;ErrP=ErrPn1-P;brasenham[x]=0;}
+		char *bptr;
+		if(x==0){bptr=&brasenham[x];sprintf(br2,"%d",*bptr);}
+		else{bptr=&brasenham[x];sprintf(br2,"%s%d",br2,*bptr);}
+		}
+sprintf(val3,"b%s",br2);
+write(fd[P4_WRITE], &val3, sizeof(val3));
+
+}
 }
 
 int set_et(){
@@ -718,7 +786,23 @@ else{cmdval=lcmdval;}
 			init_scr();
 			cmdval=0;
 		}
-		
+
+		if(cmdval==20)
+		{
+			percent=percent+10;
+			sprintf(val3,"m%.2f",percent);
+			write(fd[P4_WRITE], &val3, sizeof(val3));
+			init_scr();
+			cmdval=0;
+		}
+			if(cmdval==21)
+		{
+			percent=percent-10;
+			sprintf(val3,"m%.2f",percent);
+			write(fd[P4_WRITE], &val3, sizeof(val3));
+			init_scr();
+			cmdval=0;
+		}	
 		if(cmdval==4)
 		{
 			SV=SV-0.1;
@@ -784,6 +868,23 @@ else{cmdval=lcmdval;}
 			else{
 			delay=0;
 			sprintf(val3,"x%.2f",SV);
+			write(fd[P4_WRITE], &val3, sizeof(val3));
+			cmdval=0;}
+		}
+		if(cmdval==11)
+		{
+			if(manual==0){
+			manual=1;
+			sprintf(val3,"x%.2f",SV);
+			write(fd[P4_WRITE], &val3, sizeof(val3));
+			sprintf(val3,"c%.4f",SV);
+			write(fd[P4_WRITE], &val3, sizeof(val3));
+			cmdval=0;}
+			else{
+			manual=0;
+			sprintf(val3,"x%.2f",SV);
+			write(fd[P4_WRITE], &val3, sizeof(val3));
+			sprintf(val3,"c%.4f",SV);
 			write(fd[P4_WRITE], &val3, sizeof(val3));
 			cmdval=0;}
 		}
