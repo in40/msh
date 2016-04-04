@@ -825,7 +825,7 @@ sprintf(valbras,"%s",brsql);
 ////asprintf(&query, "INSERT INTO history_records (time_date, brasenham, set_temp, current_temp1, current_temp2, pid_ci, pid_cd, pid_cp, pid_ut, pid_et, pid_it, pid_dt) VALUES('%u','%s','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f');",(unsigned)time(NULL),valbras,SV,PVn,PVn2,Cp,Ci,Cd,ut,et,It,Dt);
 
 
-asprintf(&query, "INSERT INTO history_records (time, brasenham, SV,PV,PVn2,Cp,Ci,Cd,ut,et,It,Dt,Pt) values('%u','%s','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f');",(unsigned)time(NULL),valbras,SV,PVn,PVn2,Cp,Ci,Cd,ut,et,It,Dt,Pt);
+asprintf(&query, "INSERT INTO history_records (time, brasenham, SV,PV,PVn2,Cp,Ci,Cd,ut,et,It,Dt,Pt,SVfloat) values('%u','%s','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f','%.2f');",(unsigned)time(NULL),valbras,SV,PVn,PVn2,Cp,Ci,Cd,ut,et,It,Dt,Pt,SV);
 //asprintf(&query, "INSERT INTO history_records (time_date, brasenham) values('2','3');");
 
 	

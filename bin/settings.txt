@@ -10,9 +10,9 @@ PVn=0
 #current temp
 PVfile=./temp
 PVfile2=./temp2
-#PVfile=/mnt/1wire/uncached/28.1BF958050000/temperature10
+#PVfile=/mnt/1wire/uncached/28.E11109050000/temperature10
 #PVfile=/mnt/1wire/uncached/28.420859050000/temperature9
-#PVfile2=/mnt/1wire/uncached/28.420859050000/temperature9
+#PVfile2=/mnt/1wire/uncached/28.FFDC1D711502/temperature10
 
 et=0
 et1=0
@@ -21,16 +21,16 @@ Dt=0
 It=0
 It1=0
 hw=2500
-Pmax=30
+Pmax=10
 #pulses per period
-period=30
+period=10
 #period in seconds
 P=10
 #heating value
 ErrP=0
 #Bresenham=(0 0 0 0 0 0 0 0 0 0)
 switch_file=./sensed.A
-#switch_file=/mnt/1wire/uncached/29.D6080E000000/PIO.6
+#switch_file=/mnt/1wire/uncached/29.D6080E000000/PIO.5
 #switch_file=/mnt/1wire/uncached/29.D6080E000000/PIO.1
 panic_switch_file=./sensed.B
 panic_t=99
