@@ -279,6 +279,8 @@ delay=0;
 cmdval=3;
 write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
 mvwprintw(parent1,1,56,"%s","No delay mode");}
+wrefresh(parent1);
+break;
 
 case 'm':
 //SV1=SV1+0.1;
@@ -286,13 +288,13 @@ if(manual==1){
 manual=0;
 cmdval=11;
 write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
-mvwprintw(parent1,1,52,"%s"," - ");}
+mvwprintw(parent1,1,67,"%s","-");}
 
 else{
 manual=1;
 cmdval=11;
 write(fd[P5_WRITE],&cmdval, sizeof(cmdval));	
-mvwprintw(parent1,1,52,"%s","MAN");}
+mvwprintw(parent1,1,67,"%s","M");}
 wrefresh(parent1);
 break;
 

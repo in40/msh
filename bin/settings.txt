@@ -8,11 +8,11 @@ SV=32.30
 #set target temp
 PVn=0
 #current temp
-PVfile=./temp
-PVfile2=./temp2
-#PVfile=/mnt/1wire/uncached/28.E11109050000/temperature10
+#PVfile=./temp
+#PVfile2=./temp2
+PVfile=/mnt/1wire/28.E11109050000/temperature10
 #PVfile=/mnt/1wire/uncached/28.420859050000/temperature9
-#PVfile2=/mnt/1wire/uncached/28.FFDC1D711502/temperature10
+PVfile2=/mnt/1wire/28.FFDC1D711502/temperature10
 
 et=0
 et1=0
