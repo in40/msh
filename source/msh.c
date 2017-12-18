@@ -520,7 +520,9 @@ else{
 if(val!=-1){
 mvwprintw(hbrasdisp,1, ((40-Pmax)/2+val1),"%d",val);
 wrefresh(hbrasdisp);
-}usleep(50000);}
+}
+usleep(100);
+}
 
 
 }
@@ -573,7 +575,7 @@ val=brasenham[x];//*v;
 val1=y;
 write(fd[P1_WRITE], &val, sizeof(val));
 write(fd[P2_WRITE], &val1, sizeof(val1));
-if(delay==1){usleep((1000000*period)/Pmax);}
+if(delay==1){usleep((period)/Pmax);}
 y++;
 }
 
@@ -1004,7 +1006,7 @@ secs_usedm=(endm.tv_sec - startm.tv_sec);
 val2=secs_usedm;
 write(fd[P3_WRITE], &val2, sizeof(val2));
 dbupdate();
-usleep(100000);
+//usleep(100);
 }
 
 }
