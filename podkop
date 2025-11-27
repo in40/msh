@@ -32,7 +32,7 @@ config section 'main'
 	option user_domains_text '2ip.com
 privateinternetaccess.com
 openwrt.org
-ru.delfi.ee
+delfi.ee
 ggsel.net'
 	list community_lists 'cloudflare'
 	list community_lists 'cloudfront'
