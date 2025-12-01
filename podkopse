@@ -19,7 +19,7 @@ config settings 'settings'
 	list source_network_interfaces 'br-lan'
 	list source_network_interfaces 'uk_bridge'
 	list source_network_interfaces 'us_bridge'
-	list routing_excluded_ips '192.168.51.147'
+	list routing_excluded_ips '192.168.53.2'
 
 config section 'main'
 	option connection_type 'proxy'
