@@ -1,2 +1,2 @@
 #!/bin/ash
-echo 11111>>/tmp/ok
+echo "Script Executed"
