@@ -1,2 +1,3 @@
 #!/bin/ash
 echo "Script Executed"
+exit 0
